@@ -1,0 +1,15 @@
+# Local Properties
+/build.properties
+/.classpath
+
+#Package Files
+*.jar
+*.war
+*.ear
+
+# Complied Files
+*.class
+
+# Eclipse Settings
+.settings/
+bin/.gitignore
