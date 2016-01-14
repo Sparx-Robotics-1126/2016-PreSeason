@@ -167,51 +167,49 @@ public class Drives extends GenericSubsystem{
 		currentSpeed = (rightData.getSpeed() + leftData.getSpeed()) / 2;
 		switch(currentDriveState){
 		case LOW_GEAR:
-			if(Math.abs(currentSpeed) >= SHIFTING_SPEED){
+			if(Math.abs(currentSpeed) >= UPPER_SHIFTING_SPEED){
+				System.out.println("SHIFTING HIGH");
+				shifter.set(!LOW_GEAR);
 				shiftTime = Timer.getFPGATimestamp();
 				currentDriveState = State.SHIFTING_HIGH;
-				if(currentSpeed < 0){
-					wantedRightPower = (SHIFTING_SPEED * - 1);
-					wantedLeftPower = (SHIFTING_SPEED * - 1);
-				}else {
-					wantedRightPower = (SHIFTING_SPEED);
-					wantedLeftPower = (SHIFTING_SPEED);
-				}
 			}
 			break;
 
 		case HIGH_GEAR:
-			if(Math.abs(currentSpeed) <= SHIFTING_SPEED){
-				currentDriveState = State.SHIFTING_LOW;
+			if(Math.abs(currentSpeed) <= LOWER_SHIFTING_SPEED){
+				System.out.println("SHIFTING LOW");
+				shifter.set(!LOW_GEAR);
 				shiftTime = Timer.getFPGATimestamp();
-				if(currentSpeed < 0){
-					wantedRightPower = (SHIFTING_SPEED * -1);
-					wantedLeftPower = (SHIFTING_SPEED * -1);
-				}else{
-					wantedRightPower = (SHIFTING_SPEED);
-					wantedLeftPower = (SHIFTING_SPEED);
-				}
+				currentDriveState = State.SHIFTING_LOW;
 			}
 			break;
 
 		case SHIFTING_LOW:
-			shifter.set(LOW_GEAR);
 			if(Timer.getFPGATimestamp() >= shiftTime + SHIFTING_TIME){
 				currentDriveState = State.LOW_GEAR;
 			}
-			shifter.set(LOW_GEAR);
-			wantedRightPower = LOWER_SHIFTING_SPEED;
-			wantedLeftPower = LOWER_SHIFTING_SPEED;
+			if(currentSpeed < 0){
+				wantedRightPower = (SHIFTING_SPEED * - 1);
+				wantedLeftPower = (SHIFTING_SPEED * - 1);
+			}else {
+				wantedRightPower = (SHIFTING_SPEED);
+				wantedLeftPower = (SHIFTING_SPEED);
+			}
+			
+
 			break;
 
 		case SHIFTING_HIGH:
-			shifter.set(LOW_GEAR);
 			if(Timer.getFPGATimestamp() >= shiftTime + SHIFTING_TIME){
 				currentDriveState = State.HIGH_GEAR;
 			}
-			shifter.set(LOW_GEAR);
-			wantedRightPower = UPPER_SHIFTING_SPEED;
-			wantedLeftPower = UPPER_SHIFTING_SPEED;
+			if(currentSpeed < 0){
+				wantedRightPower = (SHIFTING_SPEED * -1);
+				wantedLeftPower = (SHIFTING_SPEED * -1);
+			}else{
+				wantedRightPower = (SHIFTING_SPEED);
+				wantedLeftPower = (SHIFTING_SPEED);
+			}
 
 
 			break;
@@ -230,7 +228,7 @@ public class Drives extends GenericSubsystem{
 	@Override
 	protected long sleepTime() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 20;
 	}
 
 	/**
@@ -238,7 +236,13 @@ public class Drives extends GenericSubsystem{
 	 */
 	@Override
 	protected void writeLog() {
-		// TODO Auto-generated method stub
+		rightData.calculateSpeed();
+		leftData.calculateSpeed();
+		System.out.println("The current state is: " + currentDriveState);
+		System.out.println("The wanted drive speeds are as follows: left,right: "
+				+ " " + wantedLeftPower + ", " + wantedRightPower);
+		System.out.println("The ender data as follows: right, left: " + rightData.getSpeed() 
+		 + leftData.getSpeed());
 
 	}
 

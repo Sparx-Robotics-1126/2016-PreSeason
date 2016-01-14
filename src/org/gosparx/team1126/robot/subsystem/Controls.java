@@ -21,15 +21,24 @@ public class Controls extends GenericSubsystem implements JoystickListener{
 	/**
 	 * declares a Drives object named drives
 	 */
-	private Drives drives;
+	private static Drives drives;
 
 	/**
 	 * declares a Controls object named controls
 	 */
 	private static Controls controls;
 	
+	/**
+	 *
+	 */
+	private double left;
+	
+	/**
+	 * 
+	 */
+	private double right;
+	
 	private static final int NEW_JOY_Y_AXIS = 1;
-	private static final int NEW_JOY_X_AXIS = 0;
 
 	/**
 	 * if controls == null, make a new controls
@@ -60,6 +69,9 @@ public class Controls extends GenericSubsystem implements JoystickListener{
 		driverJoyLeft.start();
 		driverJoyRight = new AdvancedJoystick("Right Driver", 1, 0, 0.05);
 		driverJoyRight.start();
+		left = 0;
+		right = 0;
+		drives = Drives.getInstance();
 		return true;
 	}
 
@@ -74,8 +86,8 @@ public class Controls extends GenericSubsystem implements JoystickListener{
 	@Override
 	protected boolean execute() {
 		if(ds.isOperatorControl()){
-			double left = -driverJoyLeft.getAxis(NEW_JOY_Y_AXIS);
-			double right = -driverJoyRight.getAxis(NEW_JOY_Y_AXIS);
+			left = -driverJoyLeft.getAxis(NEW_JOY_Y_AXIS);
+			right = driverJoyRight.getAxis(NEW_JOY_Y_AXIS);
 			drives.setPower(left, right);
 		}
 	
@@ -84,13 +96,12 @@ public class Controls extends GenericSubsystem implements JoystickListener{
 
 	@Override
 	protected long sleepTime() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 20;
 	}
 
 	@Override
 	protected void writeLog() {
-		// TODO Auto-generated method stub
+		System.out.println("********************** Left: " + left + " Right: " + right);
 		
 	}
 
