@@ -67,7 +67,7 @@ public class Drives extends GenericSubsystem{
 	/**
 	 * 
 	 */
-	private final double SHIFTING_SPEED = .1;
+	private final double SHIFTING_SPEED = .7;
 
 	/**
 	 * 
@@ -77,7 +77,7 @@ public class Drives extends GenericSubsystem{
 	/**
 	 * 
 	 */
-	private final int UPPER_SHIFTING_SPEED = 100;
+	private final int UPPER_SHIFTING_SPEED = 25;
 
 	/**
 	 * 
@@ -164,7 +164,7 @@ public class Drives extends GenericSubsystem{
 	protected boolean execute() {
 		rightData.calculateSpeed();
 		leftData.calculateSpeed();
-		currentSpeed = (rightData.getSpeed() + leftData.getSpeed()) / 2;
+		currentSpeed = (Math.abs(rightData.getSpeed()) + Math.abs(leftData.getSpeed())) / 2;
 		switch(currentDriveState){
 		case LOW_GEAR:
 			if(Math.abs(currentSpeed) >= UPPER_SHIFTING_SPEED){
@@ -172,13 +172,14 @@ public class Drives extends GenericSubsystem{
 				shifter.set(LOW_GEAR);
 				shiftTime = Timer.getFPGATimestamp();
 				currentDriveState = State.SHIFTING_HIGH;
-			}
+			
 			if(currentSpeed < 0){
 				wantedRightPower = (SHIFTING_SPEED * - 1);
 				wantedLeftPower = (SHIFTING_SPEED * - 1);
 			}else {
 				wantedRightPower = (SHIFTING_SPEED);
 				wantedLeftPower = (SHIFTING_SPEED);
+			}
 			}
 			break;
 
@@ -188,19 +189,19 @@ public class Drives extends GenericSubsystem{
 				shifter.set(!LOW_GEAR);
 				shiftTime = Timer.getFPGATimestamp();
 				currentDriveState = State.SHIFTING_LOW;
+				if(currentSpeed < 0){
+					wantedRightPower = (SHIFTING_SPEED * - 1);
+					wantedLeftPower = (SHIFTING_SPEED * - 1);
+				}else {
+					wantedRightPower = (SHIFTING_SPEED);
+					wantedLeftPower = (SHIFTING_SPEED);
+				}
 			}
 			break;
 
 		case SHIFTING_LOW:
 			if(Timer.getFPGATimestamp() >= shiftTime + SHIFTING_TIME){
 				currentDriveState = State.LOW_GEAR;
-			}
-			if(currentSpeed < 0){
-				wantedRightPower = (SHIFTING_SPEED * - 1);
-				wantedLeftPower = (SHIFTING_SPEED * - 1);
-			}else {
-				wantedRightPower = (SHIFTING_SPEED);
-				wantedLeftPower = (SHIFTING_SPEED);
 			}
 
 			break;
@@ -209,7 +210,6 @@ public class Drives extends GenericSubsystem{
 			if(Timer.getFPGATimestamp() >= shiftTime + SHIFTING_TIME){
 				currentDriveState = State.HIGH_GEAR;
 			}
-
 
 			break;
 
@@ -240,8 +240,8 @@ public class Drives extends GenericSubsystem{
 		System.out.println("The current state is: " + currentDriveState);
 		System.out.println("The wanted drive speeds are as follows: left,right: "
 				+ " " + wantedLeftPower + ", " + wantedRightPower);
-		System.out.println("The ender data as follows: right, left: " + rightData.getSpeed() 
-		 + leftData.getSpeed());
+		System.out.println("The encoder data as follows: right, left: " + rightData.getSpeed() 
+		 + ", " + leftData.getSpeed());
 
 	}
 
