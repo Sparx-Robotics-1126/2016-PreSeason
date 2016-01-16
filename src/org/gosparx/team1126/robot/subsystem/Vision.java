@@ -33,9 +33,9 @@ public class Vision extends GenericSubsystem {
 		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
 
 		// the camera name (ex "cam0") can be found through the roborio web interface
-		sessionfront = NIVision.IMAQdxOpenCamera("cam0",
+		sessionfront = NIVision.IMAQdxOpenCamera("cam1",
 				NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-		sessionback = NIVision.IMAQdxOpenCamera("cam1",
+		sessionback = NIVision.IMAQdxOpenCamera("cam2",
 				NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 		currSession = sessionfront;
 		NIVision.IMAQdxConfigureGrab(currSession);
