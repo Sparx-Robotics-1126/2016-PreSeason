@@ -169,9 +169,16 @@ public class Drives extends GenericSubsystem{
 		case LOW_GEAR:
 			if(Math.abs(currentSpeed) >= UPPER_SHIFTING_SPEED){
 				System.out.println("SHIFTING HIGH");
-				shifter.set(!LOW_GEAR);
+				shifter.set(LOW_GEAR);
 				shiftTime = Timer.getFPGATimestamp();
 				currentDriveState = State.SHIFTING_HIGH;
+			}
+			if(currentSpeed < 0){
+				wantedRightPower = (SHIFTING_SPEED * - 1);
+				wantedLeftPower = (SHIFTING_SPEED * - 1);
+			}else {
+				wantedRightPower = (SHIFTING_SPEED);
+				wantedLeftPower = (SHIFTING_SPEED);
 			}
 			break;
 
@@ -195,20 +202,12 @@ public class Drives extends GenericSubsystem{
 				wantedRightPower = (SHIFTING_SPEED);
 				wantedLeftPower = (SHIFTING_SPEED);
 			}
-			
 
 			break;
 
 		case SHIFTING_HIGH:
 			if(Timer.getFPGATimestamp() >= shiftTime + SHIFTING_TIME){
 				currentDriveState = State.HIGH_GEAR;
-			}
-			if(currentSpeed < 0){
-				wantedRightPower = (SHIFTING_SPEED * -1);
-				wantedLeftPower = (SHIFTING_SPEED * -1);
-			}else{
-				wantedRightPower = (SHIFTING_SPEED);
-				wantedLeftPower = (SHIFTING_SPEED);
 			}
 
 
