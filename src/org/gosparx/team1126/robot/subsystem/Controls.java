@@ -65,7 +65,9 @@ public class Controls extends GenericSubsystem implements JoystickListener{
 	 */
 	@Override
 	protected boolean init() {
-		driverJoyLeft = new AdvancedJoystick("Left Driver", 0, 0, 0.05);
+		driverJoyLeft = new AdvancedJoystick("Left Driver", 0, 1, 0.05);
+		driverJoyLeft.addActionListener(this);
+		driverJoyLeft.addButton(1);
 		driverJoyLeft.start();
 		driverJoyRight = new AdvancedJoystick("Right Driver", 1, 0, 0.05);
 		driverJoyRight.start();
@@ -107,7 +109,8 @@ public class Controls extends GenericSubsystem implements JoystickListener{
 
 	@Override
 	public void actionPerformed(ButtonEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(e.isRising() && e.getID() == 1){
+			Vision.getInstance().switchView();
+		}
 	}
 }
