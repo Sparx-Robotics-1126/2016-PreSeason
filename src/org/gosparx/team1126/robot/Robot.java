@@ -6,6 +6,7 @@ package org.gosparx.team1126.robot;
 import org.gosparx.team1126.robot.subsystem.Controls;
 import org.gosparx.team1126.robot.subsystem.Drives;
 import org.gosparx.team1126.robot.subsystem.GenericSubsystem;
+import org.gosparx.team1126.robot.subsystem.Vision;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 
@@ -16,7 +17,7 @@ public class Robot extends SampleRobot{
 	/**
 	 * An array of all of the subsystems on the robot
 	 */
-	private GenericSubsystem[] subsystems = {Drives.getInstance(), Controls.getInstance()};
+	private GenericSubsystem[] subsystems = {Drives.getInstance(), Controls.getInstance(), Vision.getInstance()};
 	
 
 	/**
