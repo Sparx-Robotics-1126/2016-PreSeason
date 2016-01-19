@@ -60,52 +60,52 @@ public class Drives extends GenericSubsystem{
 	private static double DISTANCE_PER_TICK = 0.04908739;
 
 	/**
-	 * 
+	 * the state that you're currently in
 	 */
 	private State currentDriveState;
 
 	/**
-	 * 
+	 * the required speed in order to shift
 	 */
 	private final double SHIFTING_SPEED = .7;
 
 	/**
-	 * 
+	 * the speed it takes to down shift in inches/second
 	 */
 	private final int LOWER_SHIFTING_SPEED = 10;
 
 	/**
-	 * 
+	 * the speed it takes to up shift in inches/second
 	 */
 	private final int UPPER_SHIFTING_SPEED = 25;
 
 	/**
-	 * 
+	 * the time it should take to shift in seconds
 	 */
 	private final double SHIFTING_TIME = 0.25;
 
 	/**
-	 * 
+	 * whether or not we're in low gear
 	 */
 	private final boolean LOW_GEAR = false;
 
 	/**
-	 * 
+	 * the actual time it takes to shift
 	 */
 	private double shiftTime;
 
 	/**
-	 * 
+	 * an instance of Drives
 	 */
 	private static Drives drives;
 
 	/**
-	 * 
+	 * the wanted power for the left side
 	 */
 	private static double wantedLeftPower;
 
 	/**
-	 * 
+	 * the wanted power for the right side
 	 */
 	private static double wantedRightPower;
 
@@ -121,17 +121,17 @@ public class Drives extends GenericSubsystem{
 	}
 
 	/**
-	 * 
-	 * @param name represents the 
-	 * @param priority
+	 * constructs a Drives object
+	 * @param name represents the the name of the subsystem 
+	 * @param priority the priority of the subsystem
 	 */
 	public Drives() {
 		super("Drives", Thread.NORM_PRIORITY);
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Initializes all the objects and gives data to the variables
+	 * @return true, ends loop 
 	 */
 	@Override
 	protected boolean init() {
@@ -148,7 +148,7 @@ public class Drives extends GenericSubsystem{
 	}
 
 	/**
-	 * 
+	 * allows you to input data during test mode
 	 */
 	@Override
 	protected void liveWindow() {
@@ -157,8 +157,8 @@ public class Drives extends GenericSubsystem{
 	}
 
 	/**
-	 * 
-	 * @return
+	 * executes the code, makes the robot drive
+	 * @return false to continue the loop
 	 */
 	@Override
 	protected boolean execute() {
@@ -221,8 +221,8 @@ public class Drives extends GenericSubsystem{
 	}
 
 	/**
-	 * 
-	 * @return
+	 * makes the class rest for a period of time
+	 * @return amount that the class rests for, in milliseconds
 	 */
 	@Override
 	protected long sleepTime() {
@@ -231,7 +231,7 @@ public class Drives extends GenericSubsystem{
 	}
 
 	/**
-	 * 
+	 * writes a log to the console every 5 seconds
 	 */
 	@Override
 	protected void writeLog() {
@@ -277,10 +277,14 @@ public class Drives extends GenericSubsystem{
 		}
 	}
 
+	/**
+	 * sets the power based off the joysticks 
+	 * @param left the left joystick input
+	 * @param right the right joystick input
+	 */
 	public void setPower(double left, double right) {
 		wantedLeftPower = left;
 		wantedRightPower = right;
 
 	}
-
 }
