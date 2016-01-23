@@ -2,8 +2,9 @@ package org.gosparx.team1126.robot.subsystem;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
 import org.gosparx.team1126.robot.sensors.EncoderData;
 
@@ -18,12 +19,12 @@ public class Drives extends GenericSubsystem{
 	/**
 	 * controls the right drives motor 
 	 */
-	private Talon rightDrives;
+	private CANTalon rightDrives;
 
 	/**
 	 * controls the left drives motor
 	 */
-	private Talon leftDrives;
+	private CANTalon leftDrives;
 
 	/**
 	 * is used to get the distance that robot has traveled for the left drives
@@ -111,6 +112,16 @@ public class Drives extends GenericSubsystem{
 	private static double wantedRightPower;
 
 	/**
+	 * a network table to print data
+	 */
+	private NetworkTable table;
+
+	/**
+	 * the time that its been running, in milliseconds
+	 */
+	private int currentTime;
+
+	/**
 	 * if drives == null, make a new drives
 	 * @return the new drives
 	 */
@@ -136,8 +147,8 @@ public class Drives extends GenericSubsystem{
 	 */
 	@Override
 	protected boolean init() {
-		rightDrives = new Talon(5); 
-		leftDrives = new Talon(1);
+		rightDrives = new CANTalon(1); 
+		leftDrives = new CANTalon(0);
 		leftEncoder = new Encoder(2,3);
 		leftData = new EncoderData(leftEncoder, DISTANCE_PER_TICK);
 		rightEncoder = new Encoder(0,1);
@@ -145,6 +156,7 @@ public class Drives extends GenericSubsystem{
 		shifter = new Solenoid(0);
 		currentDriveState = State.LOW_GEAR;
 		shiftTime = 0;
+		table = NetworkTable.getTable("GRIP/myContoursReport");
 		return true;
 	}
 
@@ -166,6 +178,16 @@ public class Drives extends GenericSubsystem{
 		rightData.calculateSpeed();
 		leftData.calculateSpeed();
 		currentSpeed = (Math.abs(rightData.getSpeed()) + Math.abs(leftData.getSpeed())) / 2;
+		currentTime = (int) Timer.getFPGATimestamp();
+		if((currentTime % 5) == 0){
+			double [] defaultValue = new double[0];
+			double [] areas = table.getNumberArray("area", defaultValue);
+			System.out.print("areas: ");
+			for(double area : areas){
+				System.out.print(area + " ");
+			}
+			System.out.println();
+		}
 		switch(currentDriveState){
 		case LOW_GEAR:
 			if(Math.abs(currentSpeed) >= UPPER_SHIFTING_SPEED){
@@ -173,14 +195,14 @@ public class Drives extends GenericSubsystem{
 				shifter.set(LOW_GEAR);
 				shiftTime = Timer.getFPGATimestamp();
 				currentDriveState = State.SHIFTING_HIGH;
-			
-			if(currentSpeed < 0){
-				wantedRightPower = (SHIFTING_SPEED * - 1);
-				wantedLeftPower = (SHIFTING_SPEED * - 1);
-			}else {
-				wantedRightPower = (SHIFTING_SPEED);
-				wantedLeftPower = (SHIFTING_SPEED);
-			}
+
+				if(currentSpeed < 0){
+					wantedRightPower = (SHIFTING_SPEED * - 1);
+					wantedLeftPower = (SHIFTING_SPEED * - 1);
+				}else {
+					wantedRightPower = (SHIFTING_SPEED);
+					wantedLeftPower = (SHIFTING_SPEED);
+				}
 			}
 			break;
 
@@ -242,7 +264,7 @@ public class Drives extends GenericSubsystem{
 		System.out.println("The wanted drive speeds are as follows: left,right: "
 				+ " " + wantedLeftPower + ", " + wantedRightPower);
 		System.out.println("The encoder data as follows: right, left: " + rightData.getSpeed() 
-		 + ", " + leftData.getSpeed());
+		+ ", " + leftData.getSpeed());
 
 	}
 

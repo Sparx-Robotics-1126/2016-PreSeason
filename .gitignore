@@ -13,3 +13,4 @@
 # Eclipse Settings
 .settings/
 bin/.gitignore
+/bin/
